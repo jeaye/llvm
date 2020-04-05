@@ -283,7 +283,7 @@ public:
 
   template <typename LayerT>
   Expected<orc::VModuleKey>
-  addIRModule(LayerT &Layer, std::unique_ptr<Module> M,
+  addIRModule(LayerT &Layer, std::shared_ptr<Module> M,
               std::unique_ptr<RuntimeDyld::MemoryManager> MemMgr,
               LLVMOrcSymbolResolverFn ExternalResolver,
               void *ExternalResolverCtx) {
@@ -322,7 +322,7 @@ public:
   }
 
   Expected<orc::VModuleKey>
-  addIRModuleEager(std::unique_ptr<Module> M,
+  addIRModuleEager(std::shared_ptr<Module> M,
                    LLVMOrcSymbolResolverFn ExternalResolver,
                    void *ExternalResolverCtx) {
     return addIRModule(CompileLayer, std::move(M),
@@ -331,7 +331,7 @@ public:
   }
 
   Expected<orc::VModuleKey>
-  addIRModuleLazy(std::unique_ptr<Module> M,
+  addIRModuleLazy(std::shared_ptr<Module> M,
                   LLVMOrcSymbolResolverFn ExternalResolver,
                   void *ExternalResolverCtx) {
     if (!CODLayer)

@@ -131,7 +131,7 @@ class ExecutionEngine {
 protected:
   /// The list of Modules that we are JIT'ing from.  We use a SmallVector to
   /// optimize for the case where there is only one module.
-  SmallVector<std::unique_ptr<Module>, 1> Modules;
+  SmallVector<std::shared_ptr<Module>, 1> Modules;
 
   /// getMemoryforGV - Allocate memory for a global variable.
   virtual char *getMemoryForGV(const GlobalVariable *GV);
@@ -170,7 +170,7 @@ public:
   virtual ~ExecutionEngine();
 
   /// Add a Module to the list of modules that we can JIT from.
-  virtual void addModule(std::unique_ptr<Module> M) {
+  virtual void addModule(std::shared_ptr<Module> M) {
     Modules.push_back(std::move(M));
   }
 

@@ -93,8 +93,8 @@ class MCJIT : public ExecutionEngine {
     ModulePtrSet::iterator begin_finalized() { return FinalizedModules.begin(); }
     ModulePtrSet::iterator end_finalized() { return FinalizedModules.end(); }
 
-    void addModule(std::unique_ptr<Module> M) {
-      AddedModules.insert(M.release());
+    void addModule(std::shared_ptr<Module> M) {
+      AddedModules.insert(M.get());
     }
 
     bool removeModule(Module *M) {
@@ -212,7 +212,7 @@ public:
 
   /// @name ExecutionEngine interface implementation
   /// @{
-  void addModule(std::unique_ptr<Module> M) override;
+  void addModule(std::shared_ptr<Module> M) override;
   void addObjectFile(std::unique_ptr<object::ObjectFile> O) override;
   void addObjectFile(object::OwningBinary<object::ObjectFile> O) override;
   void addArchive(object::OwningBinary<object::Archive> O) override;

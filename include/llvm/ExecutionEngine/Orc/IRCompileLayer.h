@@ -59,7 +59,7 @@ class LegacyIRCompileLayer {
 public:
   /// Callback type for notifications when modules are compiled.
   using NotifyCompiledCallback =
-      std::function<void(VModuleKey K, std::unique_ptr<Module>)>;
+      std::function<void(VModuleKey K, std::shared_ptr<Module>)>;
 
   /// Construct an LegacyIRCompileLayer with the given BaseLayer, which must
   ///        implement the ObjectLayer concept.
@@ -89,7 +89,7 @@ public:
 
   /// Compile the module, and add the resulting object to the base layer
   ///        along with the given memory manager and symbol resolver.
-  Error addModule(VModuleKey K, std::unique_ptr<Module> M) {
+  Error addModule(VModuleKey K, std::shared_ptr<Module> M) {
     if (auto Err = BaseLayer.addObject(std::move(K), Compile(*M)))
       return Err;
     if (NotifyCompiled)
