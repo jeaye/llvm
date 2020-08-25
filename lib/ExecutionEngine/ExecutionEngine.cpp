@@ -144,6 +144,7 @@ bool ExecutionEngine::removeModule(Module *M) {
   for (auto I = Modules.begin(), E = Modules.end(); I != E; ++I) {
     Module *Found = I->get();
     if (Found == M) {
+      I->release();
       Modules.erase(I);
       clearGlobalMappingsFromModule(M);
       return true;
@@ -407,7 +408,7 @@ void ExecutionEngine::runStaticConstructorsDestructors(Module &module,
 
 void ExecutionEngine::runStaticConstructorsDestructors(bool isDtors) {
   // Execute global ctors/dtors for each module in the program.
-  for (std::shared_ptr<Module> &M : Modules)
+  for (std::unique_ptr<Module> &M : Modules)
     runStaticConstructorsDestructors(*M, isDtors);
 }
 

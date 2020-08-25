@@ -77,7 +77,7 @@ MCJIT::MCJIT(std::unique_ptr<Module> M, std::unique_ptr<TargetMachine> TM,
   // If so, additional functions: addModule, removeModule, FindFunctionNamed,
   // runStaticConstructorsDestructors could be moved back to EE as well.
   //
-  std::shared_ptr<Module> First = std::move(Modules[0]);
+  std::unique_ptr<Module> First = std::move(Modules[0]);
   Modules.clear();
 
   if (First->getDataLayout().isDefault())
@@ -99,7 +99,7 @@ MCJIT::~MCJIT() {
   Archives.clear();
 }
 
-void MCJIT::addModule(std::shared_ptr<Module> M) {
+void MCJIT::addModule(std::unique_ptr<Module> M) {
   MutexGuard locked(lock);
 
   if (M->getDataLayout().isDefault())

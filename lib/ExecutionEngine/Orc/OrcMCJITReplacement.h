@@ -246,7 +246,7 @@ public:
             NotifyObjectLoaded, NotifyFinalized),
         CompileLayer(AcknowledgeORCv1Deprecation, ObjectLayer,
                      SimpleCompiler(*this->TM),
-                     [this](VModuleKey K, std::shared_ptr<Module> M) {
+                     [this](VModuleKey K, std::unique_ptr<Module> M) {
                        Modules.push_back(std::move(M));
                      }),
         LazyEmitLayer(AcknowledgeORCv1Deprecation, CompileLayer) {}
@@ -255,7 +255,7 @@ public:
     OrcMCJITReplacementCtor = createOrcMCJITReplacement;
   }
 
-  void addModule(std::shared_ptr<Module> M) override {
+  void addModule(std::unique_ptr<Module> M) override {
     // If this module doesn't have a DataLayout attached then attach the
     // default.
     if (M->getDataLayout().isDefault()) {
@@ -292,7 +292,7 @@ public:
     UnexecutedConstructors[K] = std::move(CtorNames);
     UnexecutedDestructors[K] = std::move(DtorNames);
 
-    cantFail(LazyEmitLayer.addModule(K, M));
+    cantFail(LazyEmitLayer.addModule(K, std::move(M)));
   }
 
   void addObjectFile(std::unique_ptr<object::ObjectFile> O) override {

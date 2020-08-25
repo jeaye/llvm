@@ -192,7 +192,7 @@ private:
 
   struct LogicalDylib {
     struct SourceModuleEntry {
-      std::shared_ptr<Module> SourceMod;
+      std::unique_ptr<Module> SourceMod;
       std::set<Function*> StubsToClone;
     };
 
@@ -206,7 +206,7 @@ private:
         : K(std::move(K)), BackingResolver(std::move(BackingResolver)),
           StubsMgr(std::move(StubsMgr)) {}
 
-    SourceModuleHandle addSourceModule(std::shared_ptr<Module> M) {
+    SourceModuleHandle addSourceModule(std::unique_ptr<Module> M) {
       SourceModuleHandle H = SourceModules.size();
       SourceModules.push_back(SourceModuleEntry());
       SourceModules.back().SourceMod = std::move(M);
@@ -298,7 +298,7 @@ public:
   }
 
   /// Add a module to the compile-on-demand layer.
-  Error addModule(VModuleKey K, std::shared_ptr<Module> M) {
+  Error addModule(VModuleKey K, std::unique_ptr<Module> M) {
 
     assert(!LogicalDylibs.count(K) && "VModuleKey K already in use");
     auto I = LogicalDylibs.insert(
@@ -310,7 +310,7 @@ public:
   }
 
   /// Add extra modules to an existing logical module.
-  Error addExtraModule(VModuleKey K, std::shared_ptr<Module> M) {
+  Error addExtraModule(VModuleKey K, std::unique_ptr<Module> M) {
     return addLogicalModule(LogicalDylibs[K], std::move(M));
   }
 
@@ -376,7 +376,7 @@ public:
   }
 
 private:
-  Error addLogicalModule(LogicalDylib &LD, std::shared_ptr<Module> SrcMPtr) {
+  Error addLogicalModule(LogicalDylib &LD, std::unique_ptr<Module> SrcMPtr) {
 
     // Rename anonymous globals and promote linkage to ensure that everything
     // will resolve properly after we partition SrcM.
